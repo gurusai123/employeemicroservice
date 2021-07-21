@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ij026.team3.mfpe.employeemicroservice.model.Offer;
 import com.ij026.team3.mfpe.employeemicroservice.model.OfferCategory;
 
-@FeignClient(name = "offers-microservice",url = "http://localhost:8080/offer-service/")
+@FeignClient(name = "offers",url = "http://localhost:8080/offer-service/")
 public interface OfferMicroserviceFeign {
 	@GetMapping("/test")
 	public String test(@RequestParam(required = false) Map<String, Object> map);

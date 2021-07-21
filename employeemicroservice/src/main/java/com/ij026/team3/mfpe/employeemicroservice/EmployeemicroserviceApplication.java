@@ -4,8 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import com.ij026.team3.mfpe.employeemicroservice.model.Employee;
-
 @SpringBootApplication
 @EnableFeignClients
 public class EmployeemicroserviceApplication {
