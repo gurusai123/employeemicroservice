@@ -15,18 +15,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients
 @EnableSwagger2
 public class EmployeemicroserviceApplication {
+
 	public static void main(String[] args) {
 		SpringApplication.run(EmployeemicroserviceApplication.class, args);
 	}
 
 	@Bean
 	public Docket apiDocket() {
-
 		Docket docket = new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
 				.paths(PathSelectors.any()).build();
-
 		return docket;
-
 	}
 
 }

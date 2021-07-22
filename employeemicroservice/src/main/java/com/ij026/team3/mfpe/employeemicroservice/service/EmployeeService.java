@@ -33,7 +33,7 @@ public class EmployeeService implements GenericEmployeeService {
 	@Override
 	public Map<String, Object> offersByEmployee(String empId) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		ResponseEntity<?> offerDetails = offerClient.getOfferDetails(empId);
+		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByAuthor(empId, true);
 		Integer points = pointsFeign.getPointsOfEmployee(empId);
 		if (isSuccessful(offerDetails)) {
 			@SuppressWarnings("unchecked")

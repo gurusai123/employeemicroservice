@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ij026.team3.mfpe.employeemicroservice.dao.EmployeeRepository;
 import com.ij026.team3.mfpe.employeemicroservice.model.Employee;
 import com.ij026.team3.mfpe.employeemicroservice.model.Offer;
 import com.ij026.team3.mfpe.employeemicroservice.service.EmployeeService;
 
 @RestController
 public class EmployeeController {
+	@Autowired
+	private EmployeeRepository employeeRepository;
+
 	@Autowired
 	private EmployeeService employeeService;
 
@@ -28,16 +32,20 @@ public class EmployeeController {
 	public Map<String, Object> getEmployeeOffers(@PathVariable String empId) {
 		return employeeService.offersByEmployee(empId);
 	}
-	
+
 	@GetMapping("/offers/by-most-liked")
-	public List<Offer> getMostLikedOffers(@RequestParam(required = true) String empId){
-		return(employeeService.topLikedOffersByEmployee(empId));
+	public List<Offer> getMostLikedOffers(@RequestParam(required = true) String empId) {
+		return (employeeService.topLikedOffersByEmployee(empId));
 	}
-	
+
 	@GetMapping("/employee")
-	public Optional<Employee> viewEmployeeProfile(@RequestParam(required = true) String empId){
-		return(employeeService.viewProfile(empId));
+	public Optional<Employee> viewEmployeeProfile(@RequestParam(required = true) String empId) {
+		return (employeeService.viewProfile(empId));
 	}
-	
+
+	@GetMapping("/employees")
+	public List<Employee> viewAllEmployee() {
+		return employeeRepository.findAll();
+	}
 
 }
