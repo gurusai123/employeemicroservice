@@ -34,7 +34,7 @@ public class EmployeeController {
 		return(employeeService.topLikedOffersByEmployee(empId));
 	}
 	
-	@GetMapping("/Employee")
+	@GetMapping("/employee")
 	public Optional<Employee> viewEmployeeProfile(@RequestParam(required = true) String empId){
 		return(employeeService.viewProfile(empId));
 	}
