@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +27,7 @@ public class EmployeeController {
 
 	@GetMapping("/test")
 	public String test() {
-		return ("fdsgd");
+		return ("test");
 	}
 
 	@GetMapping("/employeeOffers/{empId}")
@@ -38,9 +40,14 @@ public class EmployeeController {
 		return (employeeService.topLikedOffersByEmployee(empId));
 	}
 
-	@GetMapping("/employee")
-	public Optional<Employee> viewEmployeeProfile(@RequestParam(required = true) String empId) {
-		return (employeeService.viewProfile(empId));
+	@GetMapping("/employees/{empId}")
+	public ResponseEntity<Employee> viewEmployeeProfile(@PathVariable String empId) {
+		Optional<Employee> viewProfile = employeeService.viewProfile(empId);
+		if (viewProfile.isPresent()) {
+			return ResponseEntity.ok(viewProfile.get());
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
 	}
 
 	@GetMapping("/employees")

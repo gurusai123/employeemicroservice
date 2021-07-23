@@ -1,6 +1,6 @@
 package com.ij026.team3.mfpe.employeemicroservice.service;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,9 +32,9 @@ public class EmployeeService implements GenericEmployeeService {
 
 	@Override
 	public Map<String, Object> offersByEmployee(String empId) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByAuthor(empId, true);
-		Integer points = pointsFeign.getPointsOfEmployee(empId);
+		Integer points = pointsFeign.getPointsOfEmployee(empId).getBody();
 		if (isSuccessful(offerDetails)) {
 			@SuppressWarnings("unchecked")
 			List<Offer> offer = (List<Offer>) offerDetails.getBody();
@@ -60,7 +60,13 @@ public class EmployeeService implements GenericEmployeeService {
 	@Override
 	public Optional<Employee> viewProfile(String empId) {
 		Optional<Employee> findByEmpId = employeeRepository.findByEmpId(empId);
-		Integer points = pointsFeign.getPointsOfEmployee(empId);
+		ResponseEntity<Integer> pointsOfEmployee = pointsFeign.getPointsOfEmployee(empId);
+		int points = 0;
+
+		if (pointsOfEmployee.getStatusCodeValue() >= 200 && pointsOfEmployee.getStatusCodeValue() < 300) {
+			points = pointsOfEmployee.getBody();
+		}
+
 		if (findByEmpId.isPresent()) {
 			findByEmpId.get().setPointsGained(points);
 			employeeRepository.save(findByEmpId.get());
