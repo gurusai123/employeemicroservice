@@ -40,8 +40,8 @@ public class EmployeeController {
 		return (employeeService.topLikedOffersByEmployee(empId));
 	}
 
-	@GetMapping("/employee")
-	public ResponseEntity<Employee> viewEmployeeProfile(@RequestParam(required = true) String empId) {
+	@GetMapping("/employees/{empId}")
+	public ResponseEntity<Employee> viewEmployeeProfile(@PathVariable String empId) {
 		Optional<Employee> viewProfile = employeeService.viewProfile(empId);
 		if (viewProfile.isPresent()) {
 			return ResponseEntity.ok(viewProfile.get());
