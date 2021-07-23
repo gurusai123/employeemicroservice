@@ -31,9 +31,9 @@ public class EmployeeService implements GenericEmployeeService {
 	}
 
 	@Override
-	public Map<String, Object> offersByEmployee(String empId) {
+	public Map<String, Object> offersByEmployee(String jwtToken,String empId) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByAuthor(empId, true);
+		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByAuthor(jwtToken,empId);
 		Integer points = pointsFeign.getPointsOfEmployee(empId).getBody();
 		if (isSuccessful(offerDetails)) {
 			@SuppressWarnings("unchecked")
@@ -47,8 +47,8 @@ public class EmployeeService implements GenericEmployeeService {
 	}
 
 	@Override
-	public List<Offer> topLikedOffersByEmployee(String empId) {
-		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByLikes(3, empId);
+	public List<Offer> topLikedOffersByEmployee(String jwtToken,String empId) {
+		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByLikes(jwtToken,3, empId);
 		if (isSuccessful(offerDetails)) {
 			@SuppressWarnings("unchecked")
 			List<Offer> offer = (List<Offer>) offerDetails.getBody();

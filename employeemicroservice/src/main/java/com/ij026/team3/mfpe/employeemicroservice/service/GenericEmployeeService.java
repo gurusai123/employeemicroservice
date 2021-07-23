@@ -18,10 +18,13 @@ import com.ij026.team3.mfpe.employeemicroservice.model.Offer;
  * 
  */
 public interface GenericEmployeeService {
-	public Map<String, Object> offersByEmployee(String empId);
+	public Map<String, Object> offersByEmployee(String jwtToken, String empId);
 
-	public List<Offer> topLikedOffersByEmployee(String empId);
+	public List<Offer> topLikedOffersByEmployee(String jwtToken, String empId);
 
 	public Optional<Employee> viewProfile(String empId);
+
+	
+
 
 }
