@@ -4,14 +4,11 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name="points", url = "http://localhost:5555/points-service/")
+@FeignClient(name = "points", url = "${PMS_URL:http://localhost:5555/points-service}")
 public interface PointsMicroserviceFeign {
-	// uri:TODO
+	
 	@GetMapping("/getPointsOfEmployee/{empId}")
-	ResponseEntity<Integer> getPointsOfEmployee(@PathVariable String empId);
-
-//	// uri:TODO
-//	@GetMapping("/test_2")
-//	boolean refreshPointsOfEmployee(@RequestParam(required = true) String empId);
+	ResponseEntity<Integer> getPointsOfEmployee(@RequestHeader(name = "Authorization") String authHeader, @PathVariable String empId);
 }
