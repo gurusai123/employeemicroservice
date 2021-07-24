@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.ij026.team3.mfpe.employeemicroservice.model.AuthRequest;
 import com.ij026.team3.mfpe.employeemicroservice.model.AuthResponse;
 
-
-
-@FeignClient(name = "auth", url = "${AUTH_URL:http://localhost:6666/auth}")
+@FeignClient(name = "auth", url = "${AMS_URL:http://localhost:6666/auth}")
 public interface AuthFeign {
 
 	@PostMapping(value = "/authenticate")

@@ -22,7 +22,7 @@ public interface GenericEmployeeService {
 
 	public List<Offer> topLikedOffersByEmployee(String jwtToken, String empId);
 
-	public Optional<Employee> viewProfile(String empId);
+	public Optional<Employee> viewProfile(String jwtToken, String empId);
 
 	
 

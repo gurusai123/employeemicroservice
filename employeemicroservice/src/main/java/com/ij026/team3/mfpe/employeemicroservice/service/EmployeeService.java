@@ -31,10 +31,10 @@ public class EmployeeService implements GenericEmployeeService {
 	}
 
 	@Override
-	public Map<String, Object> offersByEmployee(String jwtToken,String empId) {
+	public Map<String, Object> offersByEmployee(String jwtToken, String empId) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByAuthor(jwtToken,empId);
-		Integer points = pointsFeign.getPointsOfEmployee(empId).getBody();
+		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByAuthor(jwtToken, empId);
+		Integer points = pointsFeign.getPointsOfEmployee(jwtToken, empId).getBody();
 		if (isSuccessful(offerDetails)) {
 			@SuppressWarnings("unchecked")
 			List<Offer> offer = (List<Offer>) offerDetails.getBody();
@@ -47,8 +47,8 @@ public class EmployeeService implements GenericEmployeeService {
 	}
 
 	@Override
-	public List<Offer> topLikedOffersByEmployee(String jwtToken,String empId) {
-		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByLikes(jwtToken,3, empId);
+	public List<Offer> topLikedOffersByEmployee(String jwtToken, String empId) {
+		ResponseEntity<?> offerDetails = offerClient.getOfferDetailsByLikes(jwtToken, 3, empId);
 		if (isSuccessful(offerDetails)) {
 			@SuppressWarnings("unchecked")
 			List<Offer> offer = (List<Offer>) offerDetails.getBody();
@@ -58,9 +58,9 @@ public class EmployeeService implements GenericEmployeeService {
 	}
 
 	@Override
-	public Optional<Employee> viewProfile(String empId) {
+	public Optional<Employee> viewProfile(String jwtToken, String empId) {
 		Optional<Employee> findByEmpId = employeeRepository.findByEmpId(empId);
-		ResponseEntity<Integer> pointsOfEmployee = pointsFeign.getPointsOfEmployee(empId);
+		ResponseEntity<Integer> pointsOfEmployee = pointsFeign.getPointsOfEmployee(jwtToken, empId);
 		int points = 0;
 
 		if (pointsOfEmployee.getStatusCodeValue() >= 200 && pointsOfEmployee.getStatusCodeValue() < 300) {

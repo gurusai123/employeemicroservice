@@ -11,14 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ij026.team3.mfpe.employeemicroservice.dao.EmployeeRepository;
-import com.ij026.team3.mfpe.employeemicroservice.exception.NoSuchEmpIdException;
 import com.ij026.team3.mfpe.employeemicroservice.feignclient.AuthFeign;
 import com.ij026.team3.mfpe.employeemicroservice.model.Employee;
-import com.ij026.team3.mfpe.employeemicroservice.model.Offer;
 import com.ij026.team3.mfpe.employeemicroservice.service.EmployeeService;
 
 @RestController
@@ -63,31 +60,32 @@ public class EmployeeController {
 		}
 	}
 
-	@GetMapping("/employeeOffers/{empId}")
+	@GetMapping("/employees/{empId}/offers")
 	public ResponseEntity<Map<String, Object>> getEmployeeOffers(@RequestHeader(name = "Authorization") String jwtToken,
 			@PathVariable String empId) {
 		if (isAuthorized(jwtToken)) {
-			if (empIdCache.contains(empId)) {
-				return ResponseEntity.ok(employeeService.offersByEmployee(jwtToken,empId));
+			if (empIdCache.containsKey(empId)) {
+				return ResponseEntity.ok(employeeService.offersByEmployee(jwtToken, empId));
 			} else {
-				return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
-	@GetMapping("/offers/by-most-liked")
-	public List<Offer> getMostLikedOffers(@RequestHeader(name = "Authorization") String jwtToken,
-			@RequestParam(required = true) String empId) {
+	@GetMapping("/employees/{empId}/offers/by-most-liked")
+	public ResponseEntity<Map<String, Object>> getMostLikedOffers(
+			@RequestHeader(name = "Authorization") String jwtToken, @PathVariable String empId) {
 		if (isAuthorized(jwtToken)) {
-			if (empIdCache.contains(empId)) {
-				return (List<Offer>) (employeeService.offersByEmployee(jwtToken,empId));
+			if (empIdCache.containsKey(empId)) {
+				return ResponseEntity.ok(employeeService.offersByEmployee(jwtToken, empId));
 			} else {
-				return (List<Offer>) ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+				System.err.println("empId");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 			}
 		} else {
-			return (List<Offer>) ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
@@ -95,8 +93,8 @@ public class EmployeeController {
 	public ResponseEntity<Employee> viewEmployeeProfile(@RequestHeader(name = "Authorization") String jwtToken,
 			@PathVariable String empId) {
 		if (isAuthorized(jwtToken)) {
-			if (empIdCache.contains(empId)) {
-				Optional<Employee> viewProfile = employeeService.viewProfile(empId);
+			if (empIdCache.containsKey(empId)) {
+				Optional<Employee> viewProfile = employeeService.viewProfile(jwtToken, empId);
 				if (viewProfile.isPresent()) {
 					return ResponseEntity.ok(viewProfile.get());
 				} else {
@@ -106,16 +104,16 @@ public class EmployeeController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
 	@GetMapping("/employees")
-	public List<Employee> viewAllEmployee(@RequestHeader(name = "Authorization") String jwtToken) {
+	public ResponseEntity<List<Employee>> viewAllEmployee(@RequestHeader(name = "Authorization") String jwtToken) {
 		if (isAuthorized(jwtToken))
-			return employeeRepository.findAll();
+			return ResponseEntity.ok(employeeRepository.findAll());
 		else
-			return (List<Employee>) ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	}
 
 }
