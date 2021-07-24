@@ -70,7 +70,7 @@ public class EmployeeController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
@@ -85,7 +85,7 @@ public class EmployeeController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
@@ -104,7 +104,7 @@ public class EmployeeController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
@@ -113,7 +113,7 @@ public class EmployeeController {
 		if (isAuthorized(jwtToken))
 			return ResponseEntity.ok(employeeRepository.findAll());
 		else
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	}
 
 }
