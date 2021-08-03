@@ -41,13 +41,10 @@ class EmployeeControllerTest {
 	@Autowired
 	private EmployeeController controller;
 
-	String valid_jwt;
-
-	String invalid_jwt;
-
-	String valid_empId;
-
-	String invalid_empId;
+	private String valid_jwt;
+	private String invalid_jwt;
+	private String valid_empId;
+	private String invalid_empId;
 
 	Optional<Employee> viewProfile;
 
@@ -83,6 +80,7 @@ class EmployeeControllerTest {
 
 	@Test
 	void testGetEmployeeOffers() {
+		when(this.employeeRepository.existsById(valid_empId)).thenReturn(true);
 		when(this.authFeign.authorizeToken(valid_jwt)).thenReturn(ResponseEntity.ok(this.valid_empId));
 		Object obj = new Object();
 		when(this.employeeService.offersByEmployee(valid_jwt, valid_empId)).thenReturn(Map.of("test", obj));
@@ -105,6 +103,7 @@ class EmployeeControllerTest {
 	@Test
 	void testGetEmployeeOffers_invalid_empId() {
 		when(this.authFeign.authorizeToken(valid_jwt)).thenReturn(ResponseEntity.ok(this.valid_empId));
+		when(this.authFeign.authorizeToken(valid_jwt)).thenReturn(ResponseEntity.ok(this.valid_empId));
 		when(this.employeeService.offersByEmployee(valid_jwt, invalid_empId)).thenReturn(Map.of());
 		ResponseEntity<Map<String, Object>> ex = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		ResponseEntity<Map<String, Object>> actual = this.controller.getEmployeeOffers(valid_jwt, invalid_empId);
@@ -114,6 +113,7 @@ class EmployeeControllerTest {
 
 	@Test
 	void testGetMostLikedOffers() {
+		when(this.employeeRepository.existsById(valid_empId)).thenReturn(true);
 		when(this.authFeign.authorizeToken(valid_jwt)).thenReturn(ResponseEntity.ok(this.valid_empId));
 		Object obj = new Object();
 		when(this.employeeService.offersByEmployee(valid_jwt, valid_empId)).thenReturn(Map.of("test", obj));
@@ -144,6 +144,7 @@ class EmployeeControllerTest {
 
 	@Test
 	void testViewEmployeeProfile() {
+		when(this.employeeRepository.existsById(valid_empId)).thenReturn(true);
 		when(this.authFeign.authorizeToken(valid_jwt)).thenReturn(ResponseEntity.ok(valid_empId));
 		when(employeeService.viewProfile(valid_jwt, valid_empId)).thenReturn(viewProfile);
 		assertEquals(ResponseEntity.ok(viewProfile.get()), controller.viewEmployeeProfile(valid_jwt, valid_empId));
@@ -152,6 +153,7 @@ class EmployeeControllerTest {
 
 	@Test
 	void testViewEmployeeProfile_invalid_jwt() {
+		when(this.employeeRepository.existsById(valid_empId)).thenReturn(true);
 		when(this.authFeign.authorizeToken(invalid_jwt))
 				.thenReturn(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
 		assertEquals(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(),
@@ -161,6 +163,7 @@ class EmployeeControllerTest {
 
 	@Test
 	void testViewEmployeeProfile_invalid_empId() {
+		when(this.employeeRepository.existsById(invalid_empId)).thenReturn(false);
 		when(this.authFeign.authorizeToken(valid_jwt)).thenReturn(ResponseEntity.ok(valid_empId));
 		assertEquals(ResponseEntity.status(HttpStatus.BAD_REQUEST).build(),
 				this.controller.viewEmployeeProfile(valid_jwt, invalid_empId));
@@ -181,6 +184,7 @@ class EmployeeControllerTest {
 		ResponseEntity<List<Employee>> all = ResponseEntity.ok(employeeRepository.findAll());
 		assertEquals(all, this.controller.viewAllEmployee(valid_jwt));
 	}
+
 	@Test
 	void testViewEmployee_invalid_jwt() {
 		when(this.authFeign.authorizeToken(invalid_jwt))
@@ -190,4 +194,14 @@ class EmployeeControllerTest {
 
 	}
 
+	
+	@Test
+	void testCheckEmpID() {
+		when(this.authFeign.authorizeToken(valid_jwt)).thenReturn(ResponseEntity.ok(valid_empId));
+		when(this.employeeRepository.existsById(valid_empId)).thenReturn(true);
+		ResponseEntity<Boolean> e = ResponseEntity.ok(true);
+		ResponseEntity<Boolean> a = this.controller.checkEmpID(valid_jwt, valid_empId);
+		
+		assertEquals(e, a);
+	}
 }
