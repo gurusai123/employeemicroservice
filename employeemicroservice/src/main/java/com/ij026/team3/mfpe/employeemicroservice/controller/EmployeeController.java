@@ -19,8 +19,11 @@ import com.ij026.team3.mfpe.employeemicroservice.feignclient.AuthFeign;
 import com.ij026.team3.mfpe.employeemicroservice.model.Employee;
 import com.ij026.team3.mfpe.employeemicroservice.service.EmployeeService;
 
+import lombok.extern.log4j.Log4j2;
+
 @RestController
 @CrossOrigin
+@Log4j2
 public class EmployeeController {
 	@Autowired
 	private EmployeeRepository employeeRepository;
@@ -36,14 +39,18 @@ public class EmployeeController {
 		return ("test");
 	}
 
-	private ConcurrentHashMap<String, Object> empIdCache = new ConcurrentHashMap<>();
+	@GetMapping("/api/ifexists/employee/{empId}")
+	public ResponseEntity<Boolean> checkEmpID(@RequestHeader(name = "Authorization") String jwtToken,
+			@PathVariable String empId) {
+		log.debug("api call from remote service for empId check");
+		if (isAuthorized(jwtToken)) {
+			return ResponseEntity.ok(ifEmployeeExists(empId));
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+	}
 
 	public EmployeeController() {
-		empIdCache.put("guru", new Object());
-		empIdCache.put("nikky", new Object());
-		empIdCache.put("subsa", new Object());
-		empIdCache.put("rish", new Object());
-		empIdCache.put("ujjw", new Object());
 	}
 
 	private boolean isAuthorized(String jwtToken) {
@@ -66,7 +73,7 @@ public class EmployeeController {
 	public ResponseEntity<Map<String, Object>> getEmployeeOffers(@RequestHeader(name = "Authorization") String jwtToken,
 			@PathVariable String empId) {
 		if (isAuthorized(jwtToken)) {
-			if (empIdCache.containsKey(empId)) {
+			if (ifEmployeeExists(empId)) {
 				return ResponseEntity.ok(employeeService.offersByEmployee(jwtToken, empId));
 			} else {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -76,11 +83,15 @@ public class EmployeeController {
 		}
 	}
 
+	private boolean ifEmployeeExists(String empId) {
+		return employeeRepository.existsById(empId);
+	}
+
 	@GetMapping("/employees/{empId}/offers/by-most-liked")
 	public ResponseEntity<Map<String, Object>> getMostLikedOffers(
 			@RequestHeader(name = "Authorization") String jwtToken, @PathVariable String empId) {
 		if (isAuthorized(jwtToken)) {
-			if (empIdCache.containsKey(empId)) {
+			if (ifEmployeeExists(empId)) {
 				return ResponseEntity.ok(employeeService.offersByEmployee(jwtToken, empId));
 			} else {
 				System.err.println("empId");
@@ -95,7 +106,7 @@ public class EmployeeController {
 	public ResponseEntity<Employee> viewEmployeeProfile(@RequestHeader(name = "Authorization") String jwtToken,
 			@PathVariable String empId) {
 		if (isAuthorized(jwtToken)) {
-			if (empIdCache.containsKey(empId)) {
+			if (ifEmployeeExists(empId)) {
 				Optional<Employee> viewProfile = employeeService.viewProfile(jwtToken, empId);
 				if (viewProfile.isPresent()) {
 					return ResponseEntity.ok(viewProfile.get());
